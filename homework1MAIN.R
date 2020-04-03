@@ -214,9 +214,35 @@ was 55.16% higher than it was in 1980, or there was a 55.16% change in rent from
 
 # 2c ####################################################################################################
 
+head(rentaldata)
+rentaldata.omit = na.omit(rentaldata)
+rentaldata.omit = 
+  rentaldata.omit %>% select(clrent, clpop, clavginc, cpctstu)
+lm.modelc = lm(clrent ~ clpop + clavginc + cpctstu, data = rentaldata.omit)
+
+summary(lm.modelc)
+
+"The intercept (0.385521) is the percent change in rent that would occur without any change 
+in population, average income, or percentage of students; even if nothing else in the model
+changes, the rent would still increase by around 38.5%."
 
 
+"In the context of this regression, the zero conditional mean assumption requires that the 
+expected differnence between the actual percent change in rent and the predicted percent change
+in rent based on our variables has a mean of 0, meaning that the residual plot of the errors
+should be randomly distributed about the y-intercept."
 
+df3 = rentaldata.omit
+df3.1 <- cbind.data.frame(df3, lm.modelc$residuals, lm.modelc$fitted.values)
+df3.1 <- 
+  df3.1 %>% arrange(`lm.modelc$fitted.values`)
+df3.1$Index <- 1:nrow(df3.1)
+df3.1 <- 
+  df3.1 %>% select(Index, `lm.modelc$residuals`)
+names(df3.1) = c("Index", "Residuals")
+ggplot(data = df3.1, aes(x = Index, y = Residuals)) + geom_point() + 
+  theme_clean() + geom_hline(yintercept = 0, linetype = "dashed") + 
+  scale_x_continuous("") + ggtitle("Residual Plot")
 
-
+"It appears from the plot that the zero-conditional mean is satisfied."
 
