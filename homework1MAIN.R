@@ -90,7 +90,7 @@ is 0.7423, far from significant at the 5% level."
 #########################################################################################################
 
 "We would carry out the t-test to obtain heteroskadasticity robust standard errors and their t-values."
-coeftest(lm.model, vcov = vcovHC(lm.model, type = "HC0"))
+coeftest(lm.model, vcov = sandwich)
 
 #########################################################################################################
 
@@ -164,7 +164,8 @@ lm.model4 = lm(SalePrice ~ ListPrice + DaysOnMarket + I(DaysOnMarket^2), data = 
 
 read.dta13("RENTAL.DTA")
 
-"https://zoom.us/j/831705163?pwd=dk9qRXFJWnhwZ3cxNHc2QlBnVkFrQT09"
+
+
 
 
 

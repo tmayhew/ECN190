@@ -188,5 +188,3 @@ all(rentaldata2b.omit$clrent == rentaldata2b.omit$clrent.calc) # this line verif
 was 55.16% higher than it was in 1980, or there was a 55.16% change in rent from 1980 to 1990."
 
 
-
-
