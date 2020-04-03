@@ -162,9 +162,30 @@ lm.model4 = lm(SalePrice ~ ListPrice + DaysOnMarket + I(DaysOnMarket^2), data = 
 
 #########################################################################################################
 
-read.dta13("RENTAL.DTA")
+rentaldata = read.dta13("RENTAL.DTA")
+summary(rentaldata)
 
 
+# 2b ####################################################################################################
+
+rentaldata2b = 
+  rentaldata %>% select(city, year, clrent, lrent, rent)
+head(rentaldata2b)
+for (i in 1:nrow(rentaldata2b)){
+  if (i %% 2 == 0){
+    rentaldata2b$clrent.calc[i] = rentaldata2b$lrent[i] - rentaldata2b$lrent[i-1]
+    
+  } else{
+    rentaldata2b$clrent.calc[i] = 0
+  }
+}
+
+rentaldata2b.omit = na.omit(rentaldata2b)
+print(head(rentaldata2b.omit, 10))
+all(rentaldata2b.omit$clrent == rentaldata2b.omit$clrent.calc) # this line verifies that the clrent variable is equal to the change in the lrent variable in each city.
+
+"For city 1, the clrent is equal to 0.5516071. This means that in city 1, the rent in 1990 
+was 55.16% higher than it was in 1980, or there was a 55.16% change in rent from 1980 to 1990."
 
 
 
