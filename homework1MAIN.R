@@ -164,6 +164,7 @@ lm.model4 = lm(SalePrice ~ ListPrice + DaysOnMarket + I(DaysOnMarket^2), data = 
 
 read.dta13("RENTAL.DTA")
 
+"https://zoom.us/j/831705163?pwd=dk9qRXFJWnhwZ3cxNHc2QlBnVkFrQT09"
 
 
 
