@@ -155,10 +155,8 @@ lm.model4 = lm(SalePrice ~ ListPrice + DaysOnMarket + I(DaysOnMarket^2), data = 
 
 
 #########################################################################################################
-
+library(readstata13)
 read.dta13("RENTAL.DTA")
-
-
 
 
 
