@@ -162,12 +162,26 @@ lm.model4 = lm(SalePrice ~ ListPrice + DaysOnMarket + I(DaysOnMarket^2), data = 
 
 #########################################################################################################
 
-read.dta13("RENTAL.DTA")
+#2a 
+
+<<<<<<< HEAD
 
 
+=======
+library(readstata13)
+rentaldata <- read.dta13("RENTAL.DTA")
 
+rental1990 <- subset(rentaldata, year != 80)
+print(rental1990)
+>>>>>>> 3a0c3105f8bf4b5719e0eac3500411507818088a
 
+model2 <- lm(lrent ~ lpop + lavginc + pctstu, data = rental1990)
+summary(model2)
 
+"Since this model is a log log regression, we can interpret the coefficients as percentages/elasticities. If we change
+lavginc (log of average income) by 1%, we would expect rent to change by 0.5%. However, for pctstu (percentage of student),
+we did not take the log of it since it is in percentages already. So if we change pctstu by 1 unit (% in this case),
+we would expect rent to change by 0.563%."
 
 
 
