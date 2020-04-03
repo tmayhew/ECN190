@@ -161,3 +161,4 @@ price if a house stays on market a week longer than the other?"
 "So the predicted difference in sale price if a house stays on market a week longer than the other = -6310.182"
 
 ##########################################
+

@@ -154,7 +154,9 @@ lm.model4 = lm(SalePrice ~ ListPrice + DaysOnMarket + I(DaysOnMarket^2), data = 
 "The house that stays on the market 7 days longer loses $6,310.18 in value."
 
 
+#########################################################################################################
 
+read.dta13("RENTAL.DTA")
 
 
 
