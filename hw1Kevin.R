@@ -162,3 +162,4 @@ price if a house stays on market a week longer than the other?"
 
 ##########################################
 
+#2b 
