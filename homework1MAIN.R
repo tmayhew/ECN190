@@ -160,20 +160,12 @@ lm.model4 = lm(SalePrice ~ ListPrice + DaysOnMarket + I(DaysOnMarket^2), data = 
 "The house that stays on the market 7 days longer loses $6,310.18 in value."
 
 
-#########################################################################################################
+# 2a ####################################################################################################
 
-#2a 
-
-<<<<<<< HEAD
-
-
-=======
-library(readstata13)
 rentaldata <- read.dta13("RENTAL.DTA")
 
 rental1990 <- subset(rentaldata, year != 80)
 print(rental1990)
->>>>>>> 3a0c3105f8bf4b5719e0eac3500411507818088a
 
 model2 <- lm(lrent ~ lpop + lavginc + pctstu, data = rental1990)
 summary(model2)
@@ -182,6 +174,30 @@ summary(model2)
 lavginc (log of average income) by 1%, we would expect rent to change by 0.5%. However, for pctstu (percentage of student),
 we did not take the log of it since it is in percentages already. So if we change pctstu by 1 unit (% in this case),
 we would expect rent to change by 0.563%."
+
+# 2b ####################################################################################################
+
+rentaldata2b = 
+  rentaldata %>% select(city, year, clrent, lrent, rent)
+head(rentaldata2b)
+for (i in 1:nrow(rentaldata2b)){
+  if (i %% 2 == 0){
+    rentaldata2b$clrent.calc[i] = rentaldata2b$lrent[i] - rentaldata2b$lrent[i-1]
+    
+  } else{
+    rentaldata2b$clrent.calc[i] = 0
+  }
+}
+
+rentaldata2b.omit = na.omit(rentaldata2b)
+print(head(rentaldata2b.omit, 10))
+all(rentaldata2b.omit$clrent == rentaldata2b.omit$clrent.calc) # this line verifies that the clrent variable is equal to the change in the lrent variable in each city.
+
+"For city 1, the clrent is equal to 0.5516071. This means that in city 1, the rent in 1990 
+was 55.16% higher than it was in 1980, or there was a 55.16% change in rent from 1980 to 1990."
+
+
+
 
 
 
