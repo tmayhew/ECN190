@@ -173,7 +173,23 @@ print(rental1990)
 model2 <- lm(lrent ~ lpop + lavginc + pctstu, data = rental1990)
 summary(model2)
 
+df2 <- rental1990 %>% select(lpop, lavginc, pctstu, lrent)
+df2.1 <- cbind.data.frame(df2, model2$residuals, model2$fitted.values)
+df2.1 <- 
+  df2.1 %>% arrange(`model2$fitted.values`) #%>% select()
+df2.1$Index <- 1:nrow(df2.1)
+df2.1 <- 
+  df2.1 %>% select(Index, `model2$residuals`)
+names(df2.1) = c("Index", "Residuals")
+ggplot(data = df2.1, aes(x = Index, y = Residuals)) + geom_point() + 
+  theme_clean() + geom_hline(yintercept = 0, linetype = "dashed") + 
+  scale_x_continuous("") + ggtitle("Residual Plot")
+
+
 "Since this model is a log log regression, we can interpret the coefficients as percentages/elasticities. If we change
 lavginc (log of average income) by 1%, we would expect rent to change by 0.5%. However, for pctstu (percentage of student),
 we did not take the log of it since it is in percentages already. So if we change pctstu by 1 unit (% in this case),
 we would expect rent to change by 0.563%."
+
+"For this model, it does not seem that the zero conditional mean assumption is satisfied here as the majority of the residuals
+are negative which means on average, the mean of the residuals is not zero."
