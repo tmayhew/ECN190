@@ -196,6 +196,9 @@ all(rentaldata2b.omit$clrent == rentaldata2b.omit$clrent.calc) # this line verif
 "For city 1, the clrent is equal to 0.5516071. This means that in city 1, the rent in 1990 
 was 55.16% higher than it was in 1980, or there was a 55.16% change in rent from 1980 to 1990."
 
+# 2c ####################################################################################################
+
+
 
 
 

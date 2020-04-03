@@ -187,4 +187,22 @@ all(rentaldata2b.omit$clrent == rentaldata2b.omit$clrent.calc) # this line verif
 "For city 1, the clrent is equal to 0.5516071. This means that in city 1, the rent in 1990 
 was 55.16% higher than it was in 1980, or there was a 55.16% change in rent from 1980 to 1990."
 
+# 2c ####################################################################################################
+
+head(rentaldata)
+rentaldata.omit = na.omit(rentaldata)
+rentaldata.omit = 
+  rentaldata.omit %>% select(clrent, clpop, clavginc, cpctstu)
+lm.modelc = lm(clrent ~ clpop + clavginc + cpctstu, data = rentaldata.omit)
+
+"The intercept (0.385521) is the percent change in rent that would occur without any change 
+in population, average income, or percentage of students; even if nothing else in the model
+changes, the rent would still increase by around 38.5%."
+
+
+
+
+
+
+
 
