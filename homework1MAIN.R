@@ -113,7 +113,13 @@ In other words, the ListPrice is slightly lower than SalePrice at every level,
 but mirrors its characteristics, while for every day on the market, a house loses
 around 385 dollars in value."
 
-df = cbind.data.frame(1:length(lm.model2$residuals), lm.model2$residuals)
+df1 = Davis2018 %>% select(ListPrice, DaysOnMarket, SalePrice)
+df = cbind.data.frame(df1, lm.model2$residuals, lm.model2$fitted.values)
+df = 
+  df %>% arrange(`lm.model2$fitted.values`) #%>% select()
+df$Index = 1:nrow(df)
+df = 
+  df %>% select(Index, `lm.model2$residuals`)
 names(df) = c("Index", "Residuals")
 ggplot(data = df, aes(x = Index, y = Residuals)) + geom_point() + 
   theme_clean() + geom_hline(yintercept = 0, linetype = "dashed") + 
