@@ -2,7 +2,9 @@
 title: "ECN190 Homework 1 Computer Problems"
 author: "Kevin Chen (914861432) John Mayhew (914807483)"
 date: "4/3/2020"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 ---
 ```{r, include = FALSE}
 library(readstata13)
@@ -12,6 +14,7 @@ library(ggpubr)
 library(lmtest)
 library(sandwich)
 library(ggthemes)
+library(knitr)
 ```
 
 # 1a)
