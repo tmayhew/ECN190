@@ -246,3 +246,6 @@ ggplot(data = df3.1, aes(x = Index, y = Residuals)) + geom_point() +
 
 "It appears from the plot that the zero-conditional mean is satisfied."
 
+# ZOOM LINK
+# https://zoom.us/j/504580118?pwd=MDRkbnNWQ1J4aVBVYlIxN1gvSXo0dz09
+
