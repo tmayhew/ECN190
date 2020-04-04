@@ -193,3 +193,6 @@ we would expect rent to change by 0.563%."
 
 "For this model, it does not seem that the zero conditional mean assumption is satisfied here as the majority of the residuals
 are negative which means on average, the mean of the residuals is not zero."
+
+#2c 
+
