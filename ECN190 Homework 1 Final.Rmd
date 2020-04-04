@@ -132,7 +132,14 @@ In other words, the ListPrice is slightly lower than SalePrice at every level,
 but mirrors its characteristics, while for every day on the market, a house loses
 around 385 dollars in value.
 
+  ```{r, results='asis', echo=FALSE}
+cat("\\newpage")
+```
+
 ### Do you think the zero conditional mean condition is satisfied here?
+
+&nbsp;
+&nbsp;
 
 ```{r, echo = FALSE}
 df1 = Davis2018 %>% select(ListPrice, DaysOnMarket, SalePrice)
@@ -147,6 +154,9 @@ ggplot(data = df, aes(x = Index, y = Residuals)) + geom_point() +
   theme_clean() + geom_hline(yintercept = 0, linetype = "dashed") + 
   scale_x_continuous("") + ggtitle("Residual Plot")
 ```
+
+&nbsp;
+&nbsp;
 
 From plotting the residuals, we can see on average that the zero conditonal mean 
 condition is satisfied because the residuals hover between -50000 and 50000, and the 
@@ -192,7 +202,14 @@ House 2 = C + 7*(-932.6248) + 49*(4.4529)
 
 "The house that stays on the market 7 days longer loses $6,310.18 in value."
 
-# 2a) Review your ECN 102 (or STA 108, ECN 140, etc…) notes on regressions with log transformed variables. Regress log of rent (lrent) on log of pop (lpop), log of avginc (lavginc), and pctstu using only 1990 data. Interpret the slope coefficient of lavginc as well as pctstu. Do you think the zero conditional mean assumption is satisfied here? 
+  ```{r, results='asis', echo=FALSE}
+cat("\\newpage")
+```
+
+## 2. Use the RENTAL.dta dataset. This dataset comes from the Wooldridge textbook. It includes rental prices and other variables of 64 college towns for the years of 1980 and 1990. 
+
+### a. Review your ECN 102 (or STA 108, ECN 140, etc…) notes on regressions with log transformed variables. Regress log of rent (lrent) on log of pop (lpop), log of avginc (lavginc), and pctstu using only 1990 data. Interpret the slope coefficient of lavginc as well as pctstu. Do you think the zero conditional mean assumption is satisfied here? 
+
 ```{r, echo = FALSE}
 rentaldata <- read.dta13("RENTAL.DTA")
 
@@ -202,7 +219,7 @@ model2 <- lm(lrent ~ lpop + lavginc + pctstu, data = rental1990)
 summary(model2)
 ```
 
-Since this model is a log log regression, we can interpret the coefficients as percentages/elasticities. If we change
+Since this model is a log regression, we can interpret the coefficients as percentages/elasticities. If we change
 lavginc (log of average income) by 1%, we would expect rent to change by 0.5%. However, for pctstu (percentage of student),
 we did not take the log of it since it is in percentages already. So if we change pctstu by 1 unit (% in this case),
 we would expect rent to change by 0.563%.
@@ -223,7 +240,8 @@ ggplot(data = df2.1, aes(x = Index, y = Residuals)) + geom_point() +
 
 For this model, it does not seem that the zero conditional mean assumption is satisfied here as the majority of the residuals are negative which means on average, the mean of the residuals is not zero.
 
-# 2b) The variable clrent only has non-missing values in 1990. Verify those values are equal to the change in lrent in each city between year 1980 and year 1990. Recall that changes in log transformed variables could be interpreted as % changes in the original variable. Notice that clrent is equal to .5516071 for city 1. How do you interpret this number?
+### b. The variable clrent only has non-missing values in 1990. Verify those values are equal to the change in lrent in each city between year 1980 and year 1990. Recall that changes in log transformed variables could be interpreted as % changes in the original variable. Notice that clrent is equal to .5516071 for city 1. How do you interpret this number?
+
 ```{r, echo = FALSE}
 rentaldata2b = 
   rentaldata %>% select(city, year, clrent, lrent, rent)
@@ -238,16 +256,20 @@ for (i in 1:nrow(rentaldata2b)){
 }
 ```
 
-For city 1, the clrent is equal to 0.5516071. This means that in city 1, the rent in 1990 
-was 55.16% higher than it was in 1980, or there was a 55.16% change in rent from 1980 to 1990.
+For city 1, the clrent is equal to 0.5516071. This means that in city 1, the rent in 1990 was 55.16% higher than it was in 1980, or there was a 55.16% change in rent from 1980 to 1990.
 
-```{r, include = FALSE}
+```{r, echo = FALSE}
 rentaldata2b.omit = na.omit(rentaldata2b)
 print(head(rentaldata2b.omit, 10))
-all(rentaldata2b.omit$clrent == rentaldata2b.omit$clrent.calc) # this line verifies that the clrent variable is equal to the change in the lrent variable in each city.
 ```
 
-# 2c) Finally, we regress change in lrent (clrent) on change in lpop (clpop), change in lavginc (clavginc), and change in pctstu (cpctstu) between year 1980 and year 1990. How do you interpret the intercept here? Explain what the zero conditional mean assumption is requiring in this regression.
+```{r, echo=TRUE}
+
+all(rentaldata2b.omit$clrent == rentaldata2b.omit$clrent.calc)
+```
+
+### c. Finally, we regress change in lrent (clrent) on change in lpop (clpop), change in lavginc (clavginc), and change in pctstu (cpctstu) between year 1980 and year 1990. How do you interpret the intercept here? Explain what the zero conditional mean assumption is requiring in this regression.
+
 ```{r, echo = FALSE}
 rentaldata.omit = na.omit(rentaldata)
 rentaldata.omit = 
@@ -260,7 +282,6 @@ summary(lm.modelc)
 The intercept (0.385521) is the percent change in rent that would occur without any change 
 in population, average income, or percentage of students; even if nothing else in the model
 changes, the rent would still increase by around 38.5%.
-
 
 In the context of this regression, the zero conditional mean assumption requires that the 
 expected differnence between the actual percent change in rent and the predicted percent change
@@ -281,4 +302,7 @@ ggplot(data = df3.1, aes(x = Index, y = Residuals)) + geom_point() +
   scale_x_continuous("") + ggtitle("Residual Plot")
 ```
 
-It appears from the plot that the zero-conditional mean is satisfied.
+&nbsp;
+&nbsp;
+
+It appears from the plot that the zero-conditional mean is satisfied. All values
