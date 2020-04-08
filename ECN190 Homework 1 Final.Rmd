@@ -170,7 +170,21 @@ conditional mean.
 cat("\\newpage")
 ```
 
+### g. Add house characteristics to the above regression model and test the joint significance of all newly added house characteristics variables.
 
+```{r, echo = FALSE}
+Davis2018.2 = 
+  Davis2018 %>% 
+  mutate(Bedroom = as.double(Bedroom),
+         FullBath = as.double(FullBath),
+         Stories = as.double(Stories)
+  )
+results <- lm(SalePrice ~ ListPrice + DaysOnMarket + Bedroom + FullBath + Stories, data = Davis2018.2)
+linearHypothesis(results, c("Bedroom=0", "FullBath=0", "Stories=0"))
+
+```
+
+From our original regression, we added 3 house characteristics: number of bedrooms, number of fullbaths, and stories. The joint significance of adding these variables into the model to predict sale price was insignificant; high p-value (0.5702) in this case indicates that we should fail to reject the null hypothesis (that the coefficients are zero) and conclude that these variables should not be included in the final model.
 
   ```{r, results='asis', echo=FALSE}
 cat("\\newpage")
