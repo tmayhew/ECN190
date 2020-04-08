@@ -208,7 +208,7 @@ House 1 = C + 0
 House 2 = C + 7*(-932.6248) + 49*(4.4529)
         = C - 6310.182
 
-"The house that stays on the market 7 days longer loses $6,310.18 in value."
+The house that stays on the market 7 days longer loses $6,310.18 in value.
 
   ```{r, results='asis', echo=FALSE}
 cat("\\newpage")
@@ -314,6 +314,10 @@ ggplot(data = df3.1, aes(x = Index, y = Residuals)) + geom_point() +
 &nbsp;
 
 It appears from the plot that the zero-conditional mean is satisfied. The majority of the residuals hover between -0.2 and 0.2, so on average, the sum of the residuals equate to zero. This leads us to the conclusion that the zero-conditional mean is satisfied from looking at the residual plot. 
+
+  ```{r, results='asis', echo=FALSE}
+cat("\\newpage")
+```
 
 ### Appendix 
 ```{r, ref.label=knitr::all_labels(),echo=TRUE,eval=FALSE}
