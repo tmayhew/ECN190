@@ -16,6 +16,7 @@ library(lmtest)
 library(sandwich)
 library(ggthemes)
 library(knitr)
+library(car)
 ```
 
 ## 1. Use Davis2018.dta.
@@ -169,15 +170,7 @@ conditional mean.
 cat("\\newpage")
 ```
 
-### g. Add house characteristics to the above regression model and test the joint significance of all newly added house characteristics variables.
 
-```{r, echo = FALSE}
-lm.model3 = lm(SalePrice ~ ListPrice + DaysOnMarket + Bedroom + FullBath + Stories, data = Davis2018)
-summary(lm.model3)
-```
-
-From our original regression, we added 3 house characteristics, number of bedrooms, number of fullbaths, and stories. With p value < 2.2e-16, 
-which is close to 0, we can conclude there is joint significance of the newly added housing variables.
 
   ```{r, results='asis', echo=FALSE}
 cat("\\newpage")
