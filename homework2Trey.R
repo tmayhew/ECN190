@@ -1,20 +1,5 @@
-tableb1 = read.csv("tableB1.csv")
-head(tableb1)
-tableb1$Yr = as.character(tableb1$Yr)
-tableb1 = tableb1[7:51,]
-tableb1$Yr = seq(1975, 2019)
-tableb27 = read.csv("TableB27.csv")
-names(tableb27)[1] = "Yr"
-tableb27 = tableb27[1:45,]
+tableb1 = read.csv("tableb1.csv")[,-1]
+tableb27 = read.csv("tableb27.csv")[,-1]
+USeconomy = cbind.data.frame(year = tableb1$Yr, gdpgrowth = tableb1$GDP, ue = tableb27$Unemployment.Rate)
+tail(USeconomy)
 
-write.csv(tableb1, "tableb1.csv")
-write.csv(tableb27, "tableb27.csv")
-
-
-
-
-
-
-
-
-USeconomy = cbind.data.frame(tableb1$Yr, tableb1$GDP, tableb27$Unemployment.Rate)
