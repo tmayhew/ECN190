@@ -32,7 +32,8 @@ USeconomy %>% ggplot(aes(x = t, y = gdpgrowth)) + geom_line() + theme_bw() +
   geom_point() + theme(legend.position = "none") + 
   scale_color_manual(values = c("red3", "black")) + geom_smooth(method = "lm", formula = "y~x", se = F) 
 
-"The intercept coefficient is 3.71980 "
+"The intercept coefficient is 3.71980. Which is the gdp growth rate our model predicts for time 0, the intial condition
+before the start of our time series, which is the year 1974."
 
 "The slope coefficient is -0.04108. This measures the change in gdp growth from one period to the next. So if t increases by
 one unit (one year), gdp growth will decrease by 0.04%" 
