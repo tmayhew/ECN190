@@ -1,6 +1,7 @@
 library(ggplot2)
 library(ggthemes)
 library(dplyr)
+library(wooldridge)
 
 tableb1 = read.csv("GDPdata.csv")[,-1]
 tableb27 = read.csv("Unemployment.csv")[,-1]
@@ -57,8 +58,11 @@ gdpgrowth = X
 acf(gdpgrowth, lag.max = 16)
 acf(gdpgrowth, lag.max = 16, plot = F)
 
-"Not stationary"
+"The mean value is not the same for all periods t, since the slope of the trend-line is negative over time, 
+therefore we conclude that the GDP growth in the US between 1975 and 2019 is not stationary."
 
+#2
+data(barium)
 
 
 
