@@ -57,7 +57,7 @@ acf(gdpgrowth, lag.max = 16, plot = F)
 
 "Not stationary"
 
-
+# https://zoom.us/j/423218327?pwd=ZXRaSU1ZbklTckIyZ1JwR0FBMm1NQT09
 
 
 
