@@ -1,0 +1,160 @@
+---
+title: "ECN 190 Homework 2 Computer Problems"
+author: "Kevin Chen (914861432) John Mayhew (914807483)"
+date: "4/10/2020"
+output: pdf_document
+---
+
+```{r, include=FALSE}
+library(ggplot2)
+library(ggthemes)
+library(dplyr)
+library(wooldridge)
+library(lmtest)
+library(sandwich)
+library(car)
+```
+
+## 1. Obtain time series data about the U.S. ecnomony and summarize. 
+
+### a. Create a data frame named “USeconomy” which includes three variables, “year” is 1975-2019, “gdpgrowth” is U.S. GDP for each year obtained from Table B-1, and “ue” is U.S. unemployment rate for each year obtained from Table B-27. 
+
+```{r, echo = FALSE}
+tableb1 = read.csv("GDPdata.csv")[,-1]
+tableb27 = read.csv("Unemployment.csv")[,-1]
+
+USeconomy = cbind.data.frame(year = tableb1$Yr, gdpgrowth = tableb1$GDP, ue = tableb27$Unemployment.Rate)
+print(USeconomy)
+```
+
+### b. Draw a line plot of gdpgrowth and year. What is the minimum value of this variable? In which year did this minimum value occur? 
+
+```{r, echo = FALSE}
+USeconomy$min = ifelse(USeconomy$gdpgrowth == min(USeconomy$gdpgrowth), "Min", "N")
+USeconomy %>% ggplot(aes(x = year, y = gdpgrowth)) + geom_line() + theme_bw() + 
+  geom_point(aes(color = min)) + theme(legend.position = "none") + scale_color_manual(values = c("red3", "black"))
+```
+
+The minimum GDP growth is -2.8% and it happened in 2008.
+
+### c. Draw a line plot of ue and year. What is the minimum value of this variable? In which year did this minimum value occur? 
+
+```{r, echo = FALSE}
+USeconomy$minUE = ifelse(USeconomy$ue == min(USeconomy$ue), "Min", "N")
+USeconomy %>% ggplot(aes(x = year, y = ue)) + geom_line() + theme_bw() + 
+  geom_point(aes(color = minUE)) + theme(legend.position = "none") + scale_color_manual(values = c("red3", "black"))
+```
+
+The minimum unemployment rate is 3.7% and it happened in 2019.
+
+### d. Generate a time period t variable that is equal to 1 for year 1975, 2 for year 1976, etc. Regress gdpgrowth on t. How would you interpret the intercept and the slope?
+
+```{r, echo = FALSE}
+USeconomy$t <- seq(1, nrow(USeconomy))
+USeconomy = USeconomy %>% select(t, year, gdpgrowth, ue)
+model <- lm(gdpgrowth ~ t, data = USeconomy)
+summary(model)
+
+USeconomy %>% ggplot(aes(x = t, y = gdpgrowth)) + geom_line() + theme_bw() + 
+  geom_point() + theme(legend.position = "none") + 
+  scale_color_manual(values = c("red3", "black")) + geom_smooth(method = "lm", formula = "y~x", se = F) 
+```
+
+The intercept coefficient is 3.71980. Which is the gdp growth rate our model predicts for time 0, the intial condition
+before the start of our time series, which is the year 1974.
+
+The slope coefficient is -0.04108. This measures the change in gdp growth from one period to the next. So if t increases by
+one unit (one year), gdp growth will decrease by 0.04%. 
+
+### e. Now, draw a scatter plot gdpgrowth and its first lag. Do you think it imply a positive or negative association between the two variables? Would you say that the association is strong or weak?
+
+```{r, echo = FALSE}
+X = USeconomy$gdpgrowth
+Xlag = X %>% lag()
+lag.df = cbind.data.frame(gdpgrowth = X, FirstDiff = Xlag)
+lag.df %>% ggplot(aes(x = gdpgrowth, y = FirstDiff)) + geom_point() + 
+  geom_smooth(method = "lm", formula = "y~x", se = F) + theme_bw() + scale_y_continuous("First Lag of gdpgrowth")
+```
+
+The association between gdpgrowth and its first lag is positive, but the correlation between the two
+appears to be weak.
+
+### f. First draw the autocorrelation function (with the default maximum of 16 lags) of gdpgrowth. Then ask R to report those autocorrelation numbers. Do you think gdpgrowth is stationary or not?
+
+```{r, echo = FALSE}
+par(mfrow = c(1, 1))
+gdpgrowth = X
+acf(gdpgrowth, lag.max = 16)
+acf(gdpgrowth, lag.max = 16, plot = F)
+```
+
+NOT SURE IF IT IS STATIONARY OR NONSTATIONARY, ACF PLOT AND ORIGINAL GDPGROWTH AND TIME PLOT SUGGESTS STATIONARITY BUT NOT FIRST LAG PLOT
+
+## 2. Use the data in BARIUM for this exercise.
+
+### (i) Add a linear time trend to equation (10.22). Are any variables, other than the trend, statistically significant?
+
+```{r, echo = FALSE}
+data(barium)
+barium = barium %>% select(t, everything())
+lm.model2 = lm(lchnimp ~ lchempi + lgas + lrtwex + befile6 + affile6 + afdec6 + t, data = barium)
+summary(lm.model2)
+```
+
+Only the linear time trend (t) is a significant variable in the model that includes all variables from equation (10.22) and t.
+
+### (ii) In the equation estimated in part (i), test for joint significance of all variables except the time trend. What do you conclude?
+
+```{r, echo = FALSE}
+linearHypothesis(lm.model2, c("lchempi=0", "lgas=0", "lrtwex=0",
+                              "befile6=0", "affile6=0", "afdec6=0"))
+```
+
+According to the joint significance hypothesis test on all variables other than t, the additional.variables are not significant because the p-value (0.7767) indicates that the F-test is not significant at any reasonable level of alpha.
+
+### (iii) Add monthly dummy variables to this equation and test for seasonality. Does including the monthly dummies change any other estimates or their standard errors in important ways?
+
+```{r, echo = FALSE}
+lm.model3 = lm(lchnimp ~ lchempi + lgas + lrtwex + befile6 + affile6 + afdec6 + t +
+               feb + mar + apr + may + jun + jul + aug + sep + oct + 
+                 nov + dec, data = barium)
+summary(lm.model3)
+barium %>% ggplot(aes(x = t, y = lchnimp)) + geom_line() + geom_smooth(method = "lm", formula = "y~x", se = F) + theme_bw() + scale_x_continuous("Time")
+
+for (i in 1:nrow(barium)){
+  if (barium$feb[i] == 1){
+    barium$month[i] = "2"
+  }else if (barium$mar[i] == 1){
+    barium$month[i] = "3"
+  }else if (barium$apr[i] == 1){
+    barium$month[i] = "4"
+  }else if (barium$may[i] == 1){
+    barium$month[i] = "5"
+  }else if (barium$jun[i] == 1){
+    barium$month[i] = "6"
+  }else if (barium$jul[i] == 1){
+    barium$month[i] = "7"
+  }else if (barium$aug[i] == 1){
+    barium$month[i] = "8"
+  }else if (barium$sep[i] == 1){
+    barium$month[i] = "9"
+  }else if (barium$oct[i] == 1){
+    barium$month[i] = "10"
+  }else if (barium$nov[i] == 1){
+    barium$month[i] = "11"
+  }else if (barium$dec[i] == 1){
+    barium$month[i] = "12"
+  }else{
+    barium$month[i] = "1"
+  }
+}
+
+barium$month = factor(barium$month, levels = c("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"))
+barium %>% ggplot(aes(x = month, y = lchnimp)) + geom_boxplot() + theme_bw() + ggtitle("lchnimp by Month", subtitle = "Examining possible seasonality")
+```
+
+There appears to be no seasonality. In examining the estimates and standard errors for the two models, the variables from the model without months appear unchanged when months are added to the overall model. From these analyses, we would conclude that months play no factor in predicting lchnimp, which means there is no significant seasonality to the time series data."
+
+### Appendix 
+```{r, ref.label=knitr::all_labels(),echo=TRUE,eval=FALSE}
+```
