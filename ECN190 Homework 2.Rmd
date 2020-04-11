@@ -93,7 +93,9 @@ acf(gdpgrowth, lag.max = 16)
 acf(gdpgrowth, lag.max = 16, plot = F)
 ```
 
-NOT SURE IF IT IS STATIONARY OR NONSTATIONARY, ACF PLOT AND ORIGINAL GDPGROWTH AND TIME PLOT SUGGESTS STATIONARITY BUT NOT FIRST LAG PLOT
+&nbsp;
+
+Given that the ACF plot has a significant correlation between points of lag 1, the plot of gdpgrowth vs its first difference has a non-zero correlation, and the mean of the original time series appears to decrease over time, we conclude that the series gdpgrowth is not stationary.
 
   ```{r, results='asis', echo=FALSE}
 cat("\\newpage")
