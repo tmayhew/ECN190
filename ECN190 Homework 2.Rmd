@@ -23,7 +23,8 @@ library(car)
 tableb1 = read.csv("GDPdata.csv")[,-1]
 tableb27 = read.csv("Unemployment.csv")[,-1]
 
-USeconomy = cbind.data.frame(year = tableb1$Yr, gdpgrowth = tableb1$GDP, ue = tableb27$Unemployment.Rate)
+USeconomy = cbind.data.frame(year = tableb1$Yr, gdpgrowth = tableb1$GDP, 
+                             ue = tableb27$Unemployment.Rate)
 print(head(USeconomy, 10))
 ```
 
@@ -32,7 +33,8 @@ print(head(USeconomy, 10))
 ```{r, echo = FALSE}
 USeconomy$min = ifelse(USeconomy$gdpgrowth == min(USeconomy$gdpgrowth), "Min", "N")
 USeconomy %>% ggplot(aes(x = year, y = gdpgrowth)) + geom_line() + theme_bw() + 
-  geom_point(aes(color = min)) + theme(legend.position = "none") + scale_color_manual(values = c("red3", "black"))
+  geom_point(aes(color = min)) + theme(legend.position = "none") + 
+  scale_color_manual(values = c("red3", "black"))
 ```
 
 The minimum GDP growth is -2.8% and it happened in 2008.
@@ -42,7 +44,8 @@ The minimum GDP growth is -2.8% and it happened in 2008.
 ```{r, echo = FALSE}
 USeconomy$minUE = ifelse(USeconomy$ue == min(USeconomy$ue), "Min", "N")
 USeconomy %>% ggplot(aes(x = year, y = ue)) + geom_line() + theme_bw() + 
-  geom_point(aes(color = minUE)) + theme(legend.position = "none") + scale_color_manual(values = c("red3", "black"))
+  geom_point(aes(color = minUE)) + theme(legend.position = "none") + 
+  scale_color_manual(values = c("red3", "black"))
 ```
 
 The minimum unemployment rate is 3.7% and it happened in 2019.
@@ -59,8 +62,16 @@ USeconomy = USeconomy %>% select(t, year, gdpgrowth, ue)
 model <- lm(gdpgrowth ~ t, data = USeconomy)
 summary(model)
 
+<<<<<<< HEAD
 USeconomy %>% ggplot(aes(x = t, y = gdpgrowth)) + geom_line() + theme_bw() + theme(legend.position = "none") + 
   scale_color_manual(values = c("red3", "black")) + geom_smooth(method = "lm", formula = "y~x", se = F)  + scale_x_continuous("Time")
+=======
+USeconomy %>% ggplot(aes(x = t, y = gdpgrowth)) + geom_line() + theme_bw() + 
+  geom_point() + theme(legend.position = "none") + 
+  scale_color_manual(values = c("red3", "black")) + geom_smooth(method = "lm", 
+                                                                formula = "y~x", 
+                                                                se = F) 
+>>>>>>> dc42dba4ad1f16609408a84ab09061707fe9633a
 ```
 
 The intercept coefficient is 3.71980. This is the gdp growth rate our model predicts for time 0, the initial condition before the start of our time series, which is the year 1974.
@@ -75,7 +86,8 @@ X = USeconomy$gdpgrowth
 Xlag = X %>% lag(n = 1)
 lag.df = cbind.data.frame(gdpgrowth = X, FirstDiff = Xlag)
 lag.df %>% ggplot(aes(x = gdpgrowth, y = FirstDiff)) + geom_point() + 
-  geom_smooth(method = "lm", formula = "y~x", se = F) + theme_bw() + scale_y_continuous("First Lag of gdpgrowth") +
+  geom_smooth(method = "lm", formula = "y~x", se = F) + theme_bw() + 
+  scale_y_continuous("First Lag of gdpgrowth") +
   ggtitle("GDP Growth vs. First Lag of GDP Growth")
 ```
 
@@ -105,7 +117,8 @@ cat("\\newpage")
 ```{r, echo = FALSE}
 data(barium)
 barium = barium %>% select(t, everything())
-lm.model2 = lm(lchnimp ~ lchempi + lgas + lrtwex + befile6 + affile6 + afdec6 + t, data = barium)
+lm.model2 = lm(lchnimp ~ lchempi + lgas + lrtwex + befile6 + affile6 + afdec6 + t, 
+               data = barium)
 summary(lm.model2)
 ```
 
@@ -120,7 +133,9 @@ cat("\\newpage")
 ```{r, echo = FALSE}
 linearHypothesis(lm.model2, c("lchempi=0", "lgas=0", "lrtwex=0",
                               "befile6=0", "affile6=0", "afdec6=0"))
-barium %>% ggplot(aes(x = t, y = lchnimp)) + geom_line() + geom_smooth(method = "lm", formula = "y~x", se = F) + theme_bw() + scale_x_continuous("Time")
+barium %>% ggplot(aes(x = t, y = lchnimp)) + geom_line() + 
+  geom_smooth(method = "lm", formula = "y~x", se = F) + theme_bw() + 
+  scale_x_continuous("Time")
 
 ```
 
@@ -162,8 +177,10 @@ for (i in 1:nrow(barium)){
   }
 }
 
-barium$month = factor(barium$month, levels = c("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"))
-barium %>% ggplot(aes(x = month, y = lchnimp)) + geom_boxplot() + theme_bw() + ggtitle("lchnimp by Month", subtitle = "Examining possible seasonality")
+barium$month = factor(barium$month, levels = c("1", "2", "3", "4", "5", "6", "7", "8", 
+                                               "9", "10","11", "12"))
+barium %>% ggplot(aes(x = month, y = lchnimp)) + geom_boxplot() + theme_bw() + 
+  ggtitle("lchnimp by Month", subtitle = "Examining possible seasonality")
 ```
 
 There appears to be no seasonality. In examining the estimates and standard errors for the two models, the variables from the model without months appear unchanged when months are added to the overall model. From these analyses, we would conclude that months play no factor in predicting lchnimp, which means there is no significant seasonality to the time series data.
