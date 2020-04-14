@@ -59,30 +59,27 @@ USeconomy = USeconomy %>% select(t, year, gdpgrowth, ue)
 model <- lm(gdpgrowth ~ t, data = USeconomy)
 summary(model)
 
-USeconomy %>% ggplot(aes(x = t, y = gdpgrowth)) + geom_line() + theme_bw() + 
-  geom_point() + theme(legend.position = "none") + 
-  scale_color_manual(values = c("red3", "black")) + geom_smooth(method = "lm", formula = "y~x", se = F) 
+USeconomy %>% ggplot(aes(x = t, y = gdpgrowth)) + geom_line() + theme_bw() + theme(legend.position = "none") + 
+  scale_color_manual(values = c("red3", "black")) + geom_smooth(method = "lm", formula = "y~x", se = F)  + scale_x_continuous("Time")
 ```
 
-The intercept coefficient is 3.71980. Which is the gdp growth rate our model predicts for time 0, the intial condition
-before the start of our time series, which is the year 1974.
+The intercept coefficient is 3.71980. This is the gdp growth rate our model predicts for time 0, the initial condition before the start of our time series, which is the year 1974.
 
 The slope coefficient is -0.04108. This measures the change in gdp growth from one period to the next. So if t increases by
 one unit (one year), gdp growth will decrease by 0.04%. 
 
-### e. Now, draw a scatter plot gdpgrowth and its first lag. Do you think it imply a positive or negative association between the two variables? Would you say that the association is strong or weak?
+### e. Now, draw a scatter plot gdpgrowth and its first lag. Do you think it implies a positive or negative association between the two variables? Would you say that the association is strong or weak?
 
-```{r, echo = F, warning = FALSE}
+```{r, echo = F, warning = F}
 X = USeconomy$gdpgrowth
-Xlag = X %>% lag()
+Xlag = X %>% lag(n = 1)
 lag.df = cbind.data.frame(gdpgrowth = X, FirstDiff = Xlag)
 lag.df %>% ggplot(aes(x = gdpgrowth, y = FirstDiff)) + geom_point() + 
   geom_smooth(method = "lm", formula = "y~x", se = F) + theme_bw() + scale_y_continuous("First Lag of gdpgrowth") +
   ggtitle("GDP Growth vs. First Lag of GDP Growth")
 ```
 
-The association between gdpgrowth and its first lag is positive, but the correlation between the two
-appears to be weak.
+The association between gdpgrowth and its first lag is positive, but the correlation between the two appears to be weak.
 
 ### f. First draw the autocorrelation function (with the default maximum of 16 lags) of gdpgrowth. Then ask R to report those autocorrelation numbers. Do you think gdpgrowth is stationary or not?
 
@@ -112,7 +109,7 @@ lm.model2 = lm(lchnimp ~ lchempi + lgas + lrtwex + befile6 + affile6 + afdec6 + 
 summary(lm.model2)
 ```
 
-Only the linear time trend (t) is a significant variable in the model that includes all variables from equation (10.22) and t.
+Only the linear time trend (t) is a significant variable in the model that includes all variables from equation (10.22) and t. All other variables are insignificant.
 
   ```{r, results='asis', echo=FALSE}
 cat("\\newpage")
@@ -127,7 +124,7 @@ barium %>% ggplot(aes(x = t, y = lchnimp)) + geom_line() + geom_smooth(method = 
 
 ```
 
-According to the joint significance hypothesis test on all variables other than t, the additional.variables are not significant since the p-value (0.7767) indicates that the F-test is not significant at any reasonable level of alpha (0.10, 0.05, 0.01).
+According to the joint significance hypothesis test on all variables other than t, the additional variables are not significant since the p-value (0.7767) indicates that the F-test is not significant at any reasonable level of alpha (0.10, 0.05, 0.01).
 
 ### (iii) Add monthly dummy variables to this equation and test for seasonality. Does including the monthly dummies change any other estimates or their standard errors in important ways?
 
