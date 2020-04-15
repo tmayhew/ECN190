@@ -62,16 +62,12 @@ USeconomy = USeconomy %>% select(t, year, gdpgrowth, ue)
 model <- lm(gdpgrowth ~ t, data = USeconomy)
 summary(model)
 
-<<<<<<< HEAD
-USeconomy %>% ggplot(aes(x = t, y = gdpgrowth)) + geom_line() + theme_bw() + theme(legend.position = "none") + 
-  scale_color_manual(values = c("red3", "black")) + geom_smooth(method = "lm", formula = "y~x", se = F)  + scale_x_continuous("Time")
-=======
-USeconomy %>% ggplot(aes(x = t, y = gdpgrowth)) + geom_line() + theme_bw() + 
-  geom_point() + theme(legend.position = "none") + 
+USeconomy %>% ggplot(aes(x = t, y = gdpgrowth)) + geom_line() + theme_bw() +
+  theme(legend.position = "none") + 
   scale_color_manual(values = c("red3", "black")) + geom_smooth(method = "lm", 
                                                                 formula = "y~x", 
                                                                 se = F) 
->>>>>>> dc42dba4ad1f16609408a84ab09061707fe9633a
+
 ```
 
 The intercept coefficient is 3.71980. This is the gdp growth rate our model predicts for time 0, the initial condition before the start of our time series, which is the year 1974.
