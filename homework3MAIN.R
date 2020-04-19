@@ -57,4 +57,17 @@ because the model has very significant seasonality, so when we
 added time trend and dummy season variables, the predicted values
 from the new model fit the data very closely."
 
+#4
+DavisSummer = DavisWeather %>% filter(month > 5, month < 10)
+DavisSummer$t = 1:nrow(DavisSummer)
+DavisSummer %>% ggplot(aes(x = t, y = maxtemp)) + geom_line() + theme_bw() +
+  scale_x_continuous("Time") + scale_y_continuous("Maximum Temperature")
+
+DavisSummer$L.maxtemp <- Lag(DavisSummer$maxtemp,1)
+DavisSummer$L2.maxtemp <- Lag(DavisSummer$maxtemp,2)
+
+cor(DavisSummer$maxtemp[2:244], DavisSummer$L.maxtemp[2:244])
+cor(DavisSummer$maxtemp[3:244], DavisSummer$L2.maxtemp[3:244])
+acf(DavisSummer$maxtemp, main = "ACF of Adjusted Maximum Temperature")
+
 
