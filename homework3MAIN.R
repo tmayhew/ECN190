@@ -70,12 +70,24 @@ cor(DavisSummer$maxtemp[2:244], DavisSummer$L.maxtemp[2:244])
 cor(DavisSummer$maxtemp[3:244], DavisSummer$L2.maxtemp[3:244])
 acf(DavisSummer$maxtemp, main = "ACF of Adjusted Maximum Temperature")
 
+"From both the correlation coefficient and the acf plot, it does not appear that the 
+daily maxiumum temperature from June to Septmber are weakly dependent. The correlation 
+between maximum temperature with lag1 and lag2 are 0.77 and 0.48 respectively, this
+tells us there is some correlation between each time period of the maximum temperature.
+Also using the ACF plot, we can see that the data is highly correlated and it captures 
+seasonlity. As lags increase, the correlation between yt and yt-p does not go to 0."
+
 #5
 detrend.model = lm(maxtemp ~ t + Jul + Aug + Sep, data = DavisSummer)
 DavisSummer$maxtempdet = detrend.model$residuals
 DavisSummer$L.maxtempdet = Lag(DavisSummer$maxtempdet,1)
 ar1.model = lm(maxtempdet ~ L.maxtempdet, data = DavisSummer)
 summary(ar1.model)
+
+"The slope coefficient of this regression represents beta1 in an AR1 detrended Model. 
+This coefficient represents the effect the last time period has on the next time period. 
+For every increase in t, daily detrended maximum temperature increases by 0.7348 multiplied
+by the detrended maximum temperature from the previous time period."
 
 #6
 DavisSummer$maxtemphatdet[2:nrow(DavisSummer)] = ar1.model$fitted.values
