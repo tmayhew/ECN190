@@ -103,5 +103,9 @@ ggplot(data = subset(df2, Type == "Real"), aes(x = X, y = Y)) +
   geom_vline(xintercept = 122.5, linetype = "dashed")
 
 
+#7
+
+"If we would like to carry out an AR(1) model for the whole time series in 2017 and 2018,
+we can control for seasonality by adding in monthly dummary variables in the model."
 
 
