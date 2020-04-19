@@ -108,4 +108,12 @@ ggplot(data = subset(df2, Type == "Real"), aes(x = X, y = Y)) +
 "If we would like to carry out an AR(1) model for the whole time series in 2017 and 2018,
 we can control for seasonality by adding in monthly dummary variables in the model."
 
+#8
+bgtest(ar1.model)
+
+"Reject the null hypothesis of zero serial correlation and conclude (based on the p-value)
+that there is serial correlation in the AR(1) model from Q5. The error terms in the AR(1)
+model are correlated."
+
+
 
