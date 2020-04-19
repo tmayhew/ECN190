@@ -4,17 +4,20 @@ library(ggthemes)
 library(knitr)
 library(car)
 
+
 DavisWeather = read.csv("DavisWeather.csv")[,-1]
 DavisWeather$t = 1:nrow(DavisWeather)
+DavisWeather = DavisWeather %>% select(t, everything())
 DavisWeather %>% ggplot(aes(x = t, y = maxtemp)) + geom_line() + theme_bw() +
-  scale_x_continuous("Time") + scale_y_continuous("Daily Maximum Temperature")
+  scale_x_continuous("Time") + scale_y_continuous("Daily Maximum Temperature") #+ geom_smooth(method = "lm", formula = "y~x", se = F)
 
 "The maxtemp data is not stationary because the expected value of maxtemp changes
 over time (t); from time 0 to 200, maxtemp increases over time, from 200-400 maxtemp 
 decreases over time, and the pattern repeats from 400-600 and 600-730. The expected
 value of temp is not constant for all levels of t, meaning the ZCM is not satisfied."
 
-# 2
+head(DavisWeather)
+
 DavisWeather$Feb = ifelse(DavisWeather$month == 2, 1, 0)
 DavisWeather$Mar = ifelse(DavisWeather$month == 3, 1, 0)
 DavisWeather$Apr = ifelse(DavisWeather$month == 4, 1, 0)
@@ -36,8 +39,6 @@ seasonal.model = lm(maxtemp ~ t + Feb + Mar + Apr + May + Jun + Jul + Aug + Sep 
 linearHypothesis(seasonal.model, c("Feb + Mar + Apr + May + Jun + Jul + Aug + Sep + 
                                    Oct + Nov + Dec = 0"))
 
-
-#3
 DavisWeather$maxtemphat = predict(seasonal.model)
 
 df1 = cbind.data.frame(X = DavisWeather$t, Y = DavisWeather$maxtemp, Type = "Real")
@@ -56,5 +57,10 @@ ggplot(data = subset(df2, Type == "Real"), aes(x = X, y = Y)) +
 because the model has very significant seasonality, so when we 
 added time trend and dummy season variables, the predicted values
 from the new model fit the data very closely."
+
+
+
+
+
 
 
