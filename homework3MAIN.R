@@ -91,22 +91,22 @@ by the detrended maximum temperature from the previous time period."
 
 #6
 DavisSummer$maxtemphatdet[2:nrow(DavisSummer)] = ar1.model$fitted.values
-df1 = cbind.data.frame(X = DavisSummer$t, Y = DavisSummer$maxtempdet, Type = "Real")
-tobind = cbind.data.frame(X = DavisSummer$t, Y = DavisSummer$maxtemphatdet, Type = "Predicted")
+DavisSummer1 = DavisSummer %>% filter(year == 2017 & (Jul == 1 | Aug == 1))
+df1 = cbind.data.frame(X = DavisSummer1$t, Y = DavisSummer1$maxtempdet, Type = "Real")
+tobind = cbind.data.frame(X = DavisSummer1$t, Y = DavisSummer1$maxtemphatdet, Type = "Predicted")
 df2 = rbind.data.frame(df1, tobind)
 ggplot(data = subset(df2, Type == "Real"), aes(x = X, y = Y)) + 
   geom_line(data = subset(df2, Type = "Predicted"), 
             linetype = "dashed", color = "steelblue", 
             alpha = I(3/4)) + geom_line() + 
   theme_bw() + scale_y_continuous("Daily Maximum Temperature") + 
-  scale_x_continuous("Time") + ggtitle("Maxtemp vs. Time for de-Trended Data: Real and Fitted Lines", subtitle = "AR(1) Model") +
-  geom_vline(xintercept = 122.5, linetype = "dashed")
+  scale_x_continuous("Time") + ggtitle("Maxtemp vs. Time for de-Trended Data: Real and Fitted Lines", subtitle = "AR(1) Model")
 
 
 #7
-
 "If we would like to carry out an AR(1) model for the whole time series in 2017 and 2018,
 we can control for seasonality by adding in monthly dummary variables in the model."
+
 
 #8
 bgtest(ar1.model)

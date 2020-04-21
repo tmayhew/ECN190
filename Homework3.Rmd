@@ -1,0 +1,191 @@
+---
+title: "ECN190 Homework 3 Computer Problems"
+author: "Kevin Chen (914861432) John Mayhew (914807483)"
+date: "4/3/2020"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r, include = F}
+library(tidyverse)
+library(sandwich)
+library(ggthemes)
+library(knitr)
+library(car)
+library(Hmisc)
+library(lmtest)
+
+```
+
+### 1. Plot out the daily maximum temperature data of the two years. Explain why this time series is not stationary.
+
+```{r, echo = F}
+#1
+DavisWeather = read.csv("DavisWeather.csv")[,-1]
+DavisWeather$t = 1:nrow(DavisWeather)
+DavisWeather = DavisWeather %>% select(t, everything())
+DavisWeather %>% ggplot(aes(x = t, y = maxtemp)) + geom_line() + theme_bw() +
+  scale_x_continuous("Time") + scale_y_continuous("Daily Maximum Temperature") + 
+  geom_smooth(method = "loess", formula = "y~x", se = F, color = "grey")
+
+```
+
+The maxtemp data is not stationary because the expected value of maxtemp changes over time (t); from time 0 to 200, maxtemp increases over time, from 200-400 maxtemp decreases over time, and the pattern repeats from 400-600 and 600-730. The expected value of temp is not constant for all levels of t, meaning the ZCM is not satisfied.
+
+  ```{r, results='asis', echo=FALSE}
+cat("\\newpage")
+```
+
+### 2. The daily maximum temperature data plotted out above has apparent seasonality. Now, regress daily maximum temperature data on monthly dummies. 
+
+```{r, echo=F}
+#2
+DavisWeather$Feb = ifelse(DavisWeather$month == 2, 1, 0)
+DavisWeather$Mar = ifelse(DavisWeather$month == 3, 1, 0)
+DavisWeather$Apr = ifelse(DavisWeather$month == 4, 1, 0)
+DavisWeather$May = ifelse(DavisWeather$month == 5, 1, 0)
+DavisWeather$Jun = ifelse(DavisWeather$month == 6, 1, 0)
+DavisWeather$Jul = ifelse(DavisWeather$month == 7, 1, 0)
+DavisWeather$Aug = ifelse(DavisWeather$month == 8, 1, 0)
+DavisWeather$Sep = ifelse(DavisWeather$month == 9, 1, 0)
+DavisWeather$Oct = ifelse(DavisWeather$month == 10, 1, 0)
+DavisWeather$Nov = ifelse(DavisWeather$month == 11, 1, 0)
+DavisWeather$Dec = ifelse(DavisWeather$month == 12, 1, 0)
+
+# Regressing MaxTemp on monthly dummies
+seasonal.model = lm(maxtemp ~ t + Feb + Mar + Apr + May + Jun + Jul + Aug + Sep + 
+                      Oct + Nov + Dec, data = DavisWeather)
+summary(seasonal.model)
+
+```
+
+If you want to formally test whether the time series has seasonality, how would you form your null hypothesis?
+
+$H_{O}$: $\beta_{2}$ + $\beta_{3}$ + $\beta_{4}$ + ... + $\beta_{12}$ = 0
+
+$H_{A}$: $\beta_{2}$ + $\beta_{3}$ + $\beta_{4}$ + ... + $\beta_{12}$ $\neq$ 0
+
+```{r, echo = F}
+linearHypothesis(seasonal.model, c("Feb + Mar + Apr + May + Jun + Jul + Aug + Sep + 
+                                   Oct + Nov + Dec = 0"))
+
+```
+
+### 3. Plot the fitted outcome values from your regression in Q2 against the true data. Do you think the model fits the data well?
+
+```{r, echo = F}
+DavisWeather$maxtemphat = predict(seasonal.model)
+
+df1 = cbind.data.frame(X = DavisWeather$t, Y = DavisWeather$maxtemp, Type = "Real")
+tobind = cbind.data.frame(X = DavisWeather$t, Y = DavisWeather$maxtemphat, 
+                          Type = "Predicted")
+df2 = rbind.data.frame(df1, tobind)
+ggplot(data = subset(df2, Type == "Real"), aes(x = X, y = Y)) + 
+  geom_line(data = subset(df2, Type = "Predicted"), 
+            linetype = "dashed", color = "steelblue", 
+            alpha = I(3/4)) + geom_line() + 
+  theme_bw() + scale_y_continuous("Daily Maximum Temperature") + 
+  scale_x_continuous("Time") + ggtitle("Maxtemp vs. Time: Real and Fitted Lines", 
+                                       subtitle = "Seasonal Model")
+
+```
+
+The model appears to fit the data well. This result is likely because the model has very significant seasonality, so when we added time trend and dummy season variables, the predicted values from the new model fit the data very closely.
+
+### 4. Now let’s further restrict the data sample to daily data from June to Sept. so that the time series would be (roughly) stationary. Do you think the daily maximum temperature data from June to Sept. are weakly dependent? Support your conclusion with graphical evidence. 
+
+```{r, echo = F}
+#4
+DavisSummer = DavisWeather %>% filter(month > 5, month < 10)
+DavisSummer$t = 1:nrow(DavisSummer)
+DavisSummer %>% ggplot(aes(x = t, y = maxtemp)) + geom_line() + theme_bw() +
+  scale_x_continuous("Time") + scale_y_continuous("Maximum Temperature") + 
+  ggtitle("Davis Weather Data", subtitle = "June, July, August, and September only")
+
+DavisSummer$L.maxtemp <- Lag(DavisSummer$maxtemp,1)
+DavisSummer$L2.maxtemp <- Lag(DavisSummer$maxtemp,2)
+
+#cor(DavisSummer$maxtemp[2:244], DavisSummer$L.maxtemp[2:244])
+#cor(DavisSummer$maxtemp[3:244], DavisSummer$L2.maxtemp[3:244])
+```
+
+  ```{r, results='asis', echo=FALSE}
+cat("\\newpage")
+```
+
+```{r, echo = F}
+acf(DavisSummer$maxtemp, main = "ACF of Adjusted Maximum Temperature")
+
+```
+
+From both the correlation coefficient and the acf plot, it does not appear that the daily maxiumum temperature from June to September are weakly dependent. The correlation between maximum temperature with lag 1 and lag 2 are 0.77 and 0.48 respectively, which tells us there is pretty significant correlation between each time period of the maximum temperature. 
+
+Also, using the ACF plot, we can see that the data is highly correlated and it captures seasonality. As lags increase, the correlation between $y_{t}$ and $y_{t-p}$ does not go to 0 fast enough. This is another sign that they are not weakly dependent, but rather highly dependent on lags of size 1 and 2.
+
+  ```{r, results='asis', echo=FALSE}
+cat("\\newpage")
+```
+
+### 5. Run an AR(1) model using these two years of summer daily maximum temperature data. How would you interpret the slope coefficient?
+
+```{r, echo = F}
+#5
+detrend.model = lm(maxtemp ~ t + Jul + Aug + Sep, data = DavisSummer)
+DavisSummer$maxtempdet = detrend.model$residuals
+DavisSummer$L.maxtempdet = Lag(DavisSummer$maxtempdet,1)
+ar1.model = lm(maxtempdet ~ L.maxtempdet, data = DavisSummer)
+summary(ar1.model)
+
+```
+
+The slope coefficient of this regression represents $\beta_{1}$ in an AR(1) detrended model. This coefficient represents the effect the last time period has on the next time period: for every increase in t, daily detrended maximum temperature increases by 0.7348 multiplied by the detrended maximum temperature from the previous time period, in this case the previous day.
+
+  ```{r, results='asis', echo=FALSE}
+cat("\\newpage")
+```
+
+### 6. Plot the fitted outcome values from your regression in Q5 against the true data for July and August of 2017. 
+
+```{r, echo = F}
+DavisSummer$maxtemphatdet[2:nrow(DavisSummer)] = ar1.model$fitted.values
+DavisSummer1 = DavisSummer %>% filter(year == 2017 & (Jul == 1 | Aug == 1))
+df1 = cbind.data.frame(X = DavisSummer1$t, Y = DavisSummer1$maxtempdet, Type = "Real")
+tobind = cbind.data.frame(X = DavisSummer1$t, Y = DavisSummer1$maxtemphatdet, 
+                          Type = "Predicted")
+df2 = rbind.data.frame(df1, tobind)
+ggplot(data = subset(df2, Type == "Real"), aes(x = X, y = Y)) + 
+  geom_line(data = subset(df2, 
+                          Type = "Predicted"), 
+            linetype = "dashed", color = "steelblue", 
+            alpha = I(3/4)) + geom_line() + 
+  theme_bw() + scale_y_continuous("Daily Maximum Temperature") + 
+  scale_x_continuous("Time") + 
+  ggtitle("Maxtemp vs. Time for de-Trended Data: Real and Fitted Lines", 
+          subtitle = "AR(1) Model, July and August of 2017 only")
+
+```
+
+### 7. The fits of regression in Q5 are, of course, only good for the summer months. If we would like to carry out an AR(1) model for the whole time series in 2016 and 2017, how would us modify our AR(1) regression to control for seasonality?
+
+If we would like to carry out an AR(1) model for the whole time series in 2017 and 2018, we can control for seasonality by adding in monthly dummary variables in the model.
+
+### 8. Use the Breusch-Godfrey test to check whether the error terms in the AR(1) in Q5 is serially correlated. What do you learn from the testing results?
+
+```{r, echo = F}
+bgtest(ar1.model)
+
+```
+
+We would reject the null hypothesis of zero serial correlation and conclude (based on the p-value) that there is serial correlation in the AR(1) model from Q5. The error terms in the AR(1) model are correlated.
+
+  ```{r, results='asis', echo=FALSE}
+cat("\\newpage")
+```
+
+### Appendix 
+```{r, ref.label=knitr::all_labels(),echo=TRUE,eval=FALSE}
+```
+
+
+
