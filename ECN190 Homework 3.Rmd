@@ -1,0 +1,16 @@
+---
+title: "ECN190 Homework 3 Computer Problems"
+author: "Kevin Chen (914861432) John Mayhew (914807483)"
+date: "4/19/2020"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(sandwich)
+library(ggthemes)
+library(knitr)
+library(car)
+library(Hmisc)
+```
+
