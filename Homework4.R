@@ -23,20 +23,31 @@ acf(dw$deseas)
 pacf(dw$deseas)
 par(mfrow = c(1,1))
 
+"We see a sudden drop in the PACF plot but a gradual decline in the ACF plot, 
+this means an AR model should be used for this time series data."
+
 # 3
 dw$L1.deseas = Lag(dw$deseas, 1)
 ar1.model = lm(deseas ~ L1.deseas, data = dw)
 bgtest(ar1.model)
-# Serial correlations exist in error terms
+
+"The p-value from this BG test is less than 0.0, this means we reject H0 and conclude that there is
+serial correlation in this model. We should consider adding more lags into this model."
 
 # 4
 dw$L2.deseas = Lag(dw$deseas, 2)
 ar2.model = lm(deseas ~ L1.deseas + L2.deseas, data = dw)
 bgtest(ar2.model)
-# No serial correlation in error terms
+
+"The p-value from this BG test is greater than 0.05, this means we failt to reject HO
+and conclude that there is no serial correlation in this model. This makes sense as previosuly,
+we concluded there is evidence of serial correlation. We fix this by adding more lags, which is 
+what we did by using an AR(2) model."
 
 # 5
 auto.model = auto.arima(dw$deseas);auto.model
+
+"The R command picks an ARMA(2,1) model"
 
 # 6
 f = forecast(auto.model, h = 3)
@@ -55,3 +66,6 @@ cbind.data.frame(t, mtemp, Type) %>%
           subtitle = "and Predictions (January 1-3 2018)") + 
   scale_x_continuous("Time") + scale_y_continuous("Maximum Temperature")
 
+"To forecast the raw maximum temperature for Jan 1-3 for 2018, we need to manually add back the seasonality into the forecast of 
+deseasonalized maximum temperature. Since the month is Januaray, this means all the dummy variables in our seasonality model = 0, 
+meaning we just add the intercept to our deseasonalized values to get the raw maximum temperature prediction of Jan 1-3 for 2018."
