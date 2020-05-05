@@ -121,7 +121,7 @@ acf(DavisSummer$maxtemp, main = "ACF of Adjusted Maximum Temperature")
 
 From both the correlation coefficient and the acf plot, it appears that the daily maxiumum temperature from June to September are weakly dependent. The correlation between maximum temperature with lag 1 and lag 2 are 0.77 and 0.48 respectively, which tells us there is pretty significant correlation between each time period of the maximum temperature. 
 
-Also, using the ACF plot, we can see that the data is highly correlated and it captures seasonality. As lags increase, the correlation between $y_{t}$ and $y_{t-p}$ does not go to 0 fast enough. This is another sign that they are weakly dependent, as there is strong correlation between lags of size 1 and 2.
+Also, using the ACF plot, we can see that the data is highly correlated and it captures seasonality. As lags increase, the correlation between $y_{t}$ and $y_{t-p}$ does go to 0 fast enough as p goes to infinity. This is another sign that they are weakly dependent, as there is strong correlation between lags of size 1 and 2 but as the lags increase, the correlations go pretty close to 0. 
 
   ```{r, results='asis', echo=FALSE}
 cat("\\newpage")
