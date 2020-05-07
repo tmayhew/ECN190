@@ -52,3 +52,4 @@ f$mean +
 "To forecast the raw maximum temperature for Jan 1-3 for 2018, we need to manually add back the seasonality into the forecast of 
 deseasonalized maximum temperature. Since the month is Januaray, this means all the dummy variables in our seasonality model = 0, 
 meaning we just add the intercept to our deseasonalized values to get the raw maximum temperature prediction of Jan 1-3 for 2018."
+
