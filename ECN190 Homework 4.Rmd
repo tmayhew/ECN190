@@ -1,0 +1,95 @@
+---
+title: "ECN190 Homework 4"
+author: "Kevin Chen (914861432) John Mayhew (914807483)"
+date: "5/6/2020"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r, include = FALSE}
+library(tidyverse)
+library(ggthemes)
+library(Hmisc)
+library(lmtest)
+library(forecast)
+```
+
+## 1. Focus on year 2017. Construct a deseasonalized maximum temperature time series of year 2017.
+```{r, echo = FALSE}
+DavisWeather = read.csv("DavisWeather.csv")[,-1]
+head(DavisWeather)
+
+dw = DavisWeather %>% filter(year == 2017)
+seasonal.model = lm(maxtemp ~ as.factor(month), data = dw)
+dw$deseas = seasonal.model$residuals
+dw$t = 1:nrow(dw)
+dw %>% ggplot(aes(x = t, y = deseas)) + geom_line() + theme_bw() + 
+  scale_x_continuous("Time (Days)") + scale_y_continuous("Deseasonalized Max Temp") +
+  ggtitle("Deseasonalized Max Temp vs. Time", subtitle = "2017")
+```
+
+## 2. Plot the autocorrelation graph of the deseasonalized maximum temperature time series of year 2017. Then plot the partial autocorrelation graph.
+```{r, echo = FALSE}
+par(mfrow = c(1,2))
+acf(dw$deseas)
+pacf(dw$deseas)
+par(mfrow = c(1,1))
+```
+
+We see a sudden drop in the PACF plot but a gradual decline in the ACF plot, this means an AR model should be used for this time series data.
+
+## 3. Run an AR(1) regression using the deseasonalized maximum temperature time series of year 2017. Then test for the assumption of no serial correlation using the BreuschGodfrey test.
+
+```{r, echo = FALSE}
+dw$L1.deseas = Lag(dw$deseas, 1)
+ar1.model = lm(deseas ~ L1.deseas, data = dw)
+bgtest(ar1.model)
+```
+
+The p-value from this BG test is less than 0.05, this means we reject H0 and conclude that there is serial correlation in this model. We should consider adding more lags into this model.
+
+## 4. Run an AR(2) regression using the deseasonalized maximum temperature time series of year 2017. Then test for the assumption of no serial correlation using the BreuschGodfrey test.
+
+```{r, echo = FALSE}
+dw$L2.deseas = Lag(dw$deseas, 2)
+ar2.model = lm(deseas ~ L1.deseas + L2.deseas, data = dw)
+bgtest(ar2.model)
+```
+
+The p-value from this BG test is greater than 0.05, this means we failt to reject HOand conclude that there is no serial correlation in this model. This makes sense as previosuly,we concluded there is evidence of serial correlation. We fix this by adding more lags, which is 
+what we did by using an AR(2) model.
+
+## 5. Now, fit the deseasonalized maximum temperature time series of year 2017 with an ARIMA(p,d,q) model. Use the “auto.arima” command in the “forecast” package to automatically pick p, d, and q. What regression model does the R command end up picking for this time series? 
+
+```{r, echo = FALSE}
+auto.model = auto.arima(dw$deseas);auto.model
+```
+
+The R command picks an ARMA(2,1) model
+
+## 6. Use the “forecast” command in the “forecast” package to forecast the deseasonalized maximum temperature of Jan. 1-3, 2018 using the model you obtained in the last question. Note that these are the deseasonalized time series. How would you forecast the raw maximum temperature of Jan. 1-3, 2018?
+
+```{r, echo = FALSE}
+f = forecast(auto.model, h = 3)
+c(f$x[350:365], f$mean)
+rawpred = seasonal.model$coefficients[1] + f$mean
+
+Observed = dw$maxtemp[335:365]
+Predicted = rawpred
+mtemp = c(Observed, Predicted)
+Type = c(rep("Observed", 31), rep("Predicted", 3))
+t = 335:368
+cbind.data.frame(t, mtemp, Type) %>% 
+  ggplot(aes(x = t, y = mtemp)) + geom_point(aes(color = Type)) + 
+  geom_line(linetype = "dashed", alpha = I(1/2)) + theme_bw() +
+  ggtitle("Maxtemp Observed Values (December 2017)", 
+          subtitle = "and Predictions (January 1-3 2018)") + 
+  scale_x_continuous("Time") + scale_y_continuous("Maximum Temperature")
+```
+
+To forecast the raw maximum temperature for Jan 1-3 for 2018, we need to manually add back the seasonality into the forecast of deseasonalized maximum temperature. Since the month is Januaray, this means all the dummy variables in our seasonality model = 0, meaning we just add the intercept to our deseasonalized values to get the raw maximum temperature prediction of Jan 1-3 for 2018.
+
+### Appendix 
+```{r, ref.label=knitr::all_labels(),echo=TRUE,eval=FALSE}
+```
