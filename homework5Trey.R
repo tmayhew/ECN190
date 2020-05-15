@@ -46,13 +46,23 @@ results
 # sigma-sq-t = 1.618e-07 + 4.858e-02*(ut-1) + 9.497e-01*(sigma-sq-(t-1))
 
 # 5 ########################################################################
+
 return = close$percentchange[-1]
 dates = close$date[-1]
+par(mfrow = c(1,2))
 volatility_longterm<-rep(sd(return),length(return))
 plot(dates,return,type="l")
 lines(dates,mean(return)+2*volatility_longterm,col="red")
 lines(dates,mean(return)-2*volatility_longterm,col="red")
+volatility_GARCH <- volatility(results, type = "sigma")
+plot(dates,return,type="l")
+lines(dates,mean(return)+2*volatility_GARCH,col="red")
+lines(dates,mean(return)-2*volatility_GARCH,col="red")
+par(mfrow = c(1,1))
 
+# 6 ########################################################################
+# plot = FALSE
+predict(results, level=95, interval=TRUE, plot = T, n.ahead = 1)[4:5]
 
 
 
