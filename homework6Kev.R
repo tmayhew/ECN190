@@ -31,8 +31,13 @@ parameter and since beta2 is less than 0, the curve produces a trough, which mea
 
 #5
 predict <- NSrates(NSresults, 2.5)
+predict
 
 "Our Nelson-Siegel model predicts `r predict`% as the annual yield of a US treasury bond in the secondary market in March 2007
 with 2.5 years left to maturity"
 
 #6 
+fv = 1000
+
+price <- fv/((1+0.04573102)^2.5)
+price
